@@ -18,17 +18,14 @@ rawFile.close()
 words = nltk.word_tokenize(rawText)
 
 # Construct the graph
-g = nx.Graph()
+g = nx.DiGraph()
 for w1, w2 in [[words[i], words[i+1]] for i in xrange(len(words)-1)]:
     g.add_node(w1)
     g.add_node(w2)
     g.add_edge(w1,w2)
 
 # Compute values
-pairs = {}
-for n in g.nodes():
-    pairs[n] = g.degree(n)
-
+pairs = nx.pagerank(g)
 
 # Rank sentences
 
@@ -47,3 +44,4 @@ for sentence in sentList:
 
 for x in sorted(high_sent, key=lambda x : x[1], reverse=True):
     print x
+
