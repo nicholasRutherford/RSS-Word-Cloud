@@ -8,7 +8,7 @@ import urllib2
 import pprint
 
 
-HTML_DIR = "./html/"
+HTML_DIR = "./hnSummarized/html/"
 BASE_URL = "https://hacker-news.firebaseio.com/v0/"
 CUT_OFF = 100
 
@@ -18,9 +18,11 @@ links =  r.json()[:CUT_OFF]
 
 def isGoodStory(q):
     """Determins if a story is 'good'"""
-    if q["score"] > 100:
-        return True
-    return False
+    if q["title"].lower().count(pdf) > 0:
+        return False
+    if q["score"] < 100:
+        return False
+    return True
 
 # Go through the stories and select the good ones
 goodStories = []
