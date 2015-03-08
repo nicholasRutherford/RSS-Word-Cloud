@@ -1,11 +1,9 @@
 import nltk
-import nltk
 import networkx as nx
 import pprint
 from nltk.corpus import stopwords
 stop = stopwords.words('english')
 
-import matplotlib as plt
 TEXT_DIR = "./hnSummarized/text/"
 
 testFile = "Fired.txt"
