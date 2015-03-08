@@ -40,9 +40,7 @@ for link in links:
 print "downloading..."
 for link in goodStories:
     try:
-        name = link["title"]
-        name = name.replace(" ", "_")
-        name = name.replace("/", "")
+        name = link["id"]
         name = name + ".html"
         response = urllib2.urlopen(link["url"])
         rawHtml = response.read()
