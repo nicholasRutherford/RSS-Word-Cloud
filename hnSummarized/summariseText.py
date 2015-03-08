@@ -11,10 +11,12 @@ for textFile in listdir(TEXT_DIR):
     sumSents = selectSentences(rawText, 10)
 
     print textFile
-    sm += textFile 
+    sm += "************************************************************\n"
+    sm += textFile + "\n"
+    sm += "************************************************************\n"
     for sent in sumSents:
-        sm += sent + "\n-----\n"
-    sm += "\n\n"
+        sm += sent + "\n---------------------------------------------\n"
+    sm += "\n\n\n"
 
 ofile = file("sumall", "w+")
 ofile.write(sm)

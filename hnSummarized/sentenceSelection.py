@@ -20,7 +20,26 @@ def selectSentences(rawText, K):
 
     # Load pre-learned sentence detector, and split into sentences
     sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
-    sentList = sent_detector.tokenize(rawText)
+    rawSentList = sent_detector.tokenize(rawText)
+    sentList = []
+    for sentence in rawSentList:
+        if sentence.count("]") > 0:
+            continue
+        if sentence.count("[") > 0:
+            continue
+        if sentence.count("{") > 0 :
+            continue
+        if sentence.count("}") > 0 :
+            continue
+        if sentence.count("(") > 0 :
+            continue
+        if sentence.count(")") > 0:
+            continue
+        if sentence.count("|") > 0:
+            continue
+        if sentence.count("=") > 0:
+            continue
+        sentList.append(sentence)
 
     # Initialize graph
     g = nx.Graph()
