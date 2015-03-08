@@ -1,6 +1,7 @@
 import nltk
 import networkx as nx
 from nltk.corpus import stopwords
+import re
 
 def word_token(s, STOP_WORDS):
     """Convert a sentence into a list of words, excluding stop words"""
@@ -72,8 +73,17 @@ def selectSentences(rawText, K):
         min_score = 0
 
     # Return sentences above cutoff in the order they appeared in the text
-    toReturn = []
+    toReturn = ""
+    skip = False
     for sentence in sentList:
         if scores[sentence] > min_score:
-            toReturn.append(sentence)
+            if skip:
+                toReturn += " [...] "
+            else:
+                 toReturn += " "
+            toReturn += sentence
+            skip = False
+        else:
+            skip = True
+    toReturn = re.sub( '\s+', ' ', toReturn ).strip()
     return toReturn

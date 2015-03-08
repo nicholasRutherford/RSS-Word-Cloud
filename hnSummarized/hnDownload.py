@@ -5,21 +5,29 @@ Author: Nicholas Rutherford
 import requests
 
 import os
+import json
 from datetime import datetime
 import urllib2
 import pprint
 
 
 HTML_DIR = "./hnSummarized/html/"
+INFO_DICT = "./hnSummarized/info.json"
 BASE_URL = "https://hacker-news.firebaseio.com/v0/"
 HN_BASE = "https://news.ycombinator.com/item?id="
 CUT_OFF = 100
 
+# Load information
+infoFile = file(INFO_DICT, "r")
+info = json.load(infoFile)
+
 alreadyGot = []
 # Get list of files you've already downloaded
+"""
 for folder in os.listdir(HTML_DIR):
     for downFile in os.listdir(HTML_DIR + folder):
         alreadyGot.append(int(downFile.split(".")[0]))
+"""
 
 # Get top stories
 r = requests.get(BASE_URL + "topstories.json")
@@ -71,17 +79,31 @@ for link in goodStories:
         name = str(link["id"])
         name = name + ".html"
 
+        title = link["title"]
+        comments = HN_BASE + str(link["id"])
+
         folder = getFolder(link)
 
         # If it is an internal link, preface it with base url
         if link["url"] == "":
-            response = urllib2.urlopen(HN_BASE + str(link["id"]))
+            url = comments
         else:
-            response = urllib2.urlopen(link["url"])
+            url = link["url"]
+
+        response = urllib2.urlopen(url)
         rawHtml = response.read()
+        i = {'title': title,
+                'comments': comments,
+                'url': url}
+        info[str(link["id"])] = i
 
         outFile = file(folder + name, "w+")
         outFile.write(rawHtml)
         outFile.close()
     except (urllib2.HTTPError, ValueError):
         print "Error on : ", link["title"]
+
+# store info file
+infoFile = file(INFO_DICT, "w+")
+json.dump(info, infoFile)
+infoFile.close()
