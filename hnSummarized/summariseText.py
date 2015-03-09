@@ -38,22 +38,31 @@ ELE_END = """
         </div>
     </div>
 """
-ROW_END = "</div>"
+ROW_END = "</div>\n"
 
 PAGE_END = """
 </body>
 </html>
 """
 
-def fTitle(t):
-    return '<h3 class ="text-center">' + t + '</h3>\n'
+def block(title, summary, article, comments):
+    ele = """
+    <div class="col-sm-6">
+        <div class="container-fluid">
+            <h3 class ="text-center">{0}</h3>  
+            <blockquote>
+                <p>
+                    {1}
+                </p>
+                <footer>
+                    <a href ="{2}">Article</a> | <a href="{3}">HN Comments</a>
+                </footer>
+            </blockquote>
+        </div>
+    </div>
+"""
+    return ele.format(title, summary, article, comments)
 
-def block(sumary, art, com):
-    outso = "<blockquote>\n<p>"+ sumary + "</p>\n"
-    outso += '<footer><a href="' + art + '">Article</a> | '
-    outso += '<a href="' + com + '"> HN Comments</a> </footer>\n'
-    outso += '</blockquote>\n'
-    return outso
 
 ADD_ROW_BEFORE = True
 
@@ -72,10 +81,12 @@ for folder in listdir(TEXT_DIR):
         if ADD_ROW_BEFORE:
             OUT += ROW
 
-        OUT += ELE
-        OUT += fTitle(info[fileID]["title"])
-        OUT += block(sumSents, info[fileID]["url"], info[fileID]["comments"])
-        OUT += ELE_END
+        title = info[fileID]["title"].encode("ascii", "ignore")
+        summary = sumSents.encode("ascii", "ignore")
+        article = info[fileID]["url"].encode("ascii", "ignore")
+        comments = info[fileID]["comments"].encode("ascii", "ignore")
+
+        OUT += block(title, summary, article, comments)
 
         if not ADD_ROW_BEFORE: #False
             OUT += ROW_END
@@ -83,7 +94,6 @@ for folder in listdir(TEXT_DIR):
         else:
             ADD_ROW_BEFORE = False
 
-OUT = OUT.encode("ascii", "ignore")
 ofile = file("out.html", "w+")
 ofile.write(OUT)
 ofile.close()

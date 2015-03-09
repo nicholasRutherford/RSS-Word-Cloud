@@ -33,9 +33,13 @@ for folder in listdir(HTML_DIR):
             soup = BeautifulSoup(rawHtml, "html5lib")
             rawText = soup.get_text()
             rawText = rawText.encode("ascii", "ignore")
+        else:
+            rawText = "No summary available."
 
-            dPath = getFolder(folder, downFile)
-            rawFile = file(dPath, "w+")
-            rawFile.write(str(rawText))
-            rawFile.close()
+        dPath = getFolder(folder, downFile)
+        rawFile = file(dPath, "w+")
+        rawFile.write(str(rawText))
+        rawFile.close()
+
+
             

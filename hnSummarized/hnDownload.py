@@ -23,11 +23,9 @@ info = json.load(infoFile)
 
 alreadyGot = []
 # Get list of files you've already downloaded
-"""
 for folder in os.listdir(HTML_DIR):
     for downFile in os.listdir(HTML_DIR + folder):
         alreadyGot.append(int(downFile.split(".")[0]))
-"""
 
 # Get top stories
 r = requests.get(BASE_URL + "topstories.json")
