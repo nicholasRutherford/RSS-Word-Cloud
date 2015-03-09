@@ -30,7 +30,7 @@ for folder in os.listdir(TEXT_DIR):
         summary = selectSentences(rawText, NUM_SENTENCES)
 
         # Key Words
-        keyWordsList = ["One, two, three"]
+        keyWordsList = ["One", "Two", "Three", "Four"]
         keyWords = keyWordsList[0] + " | ".join(keyWordsList[1:])
 
         toSave = keyWords + "\n" + summary

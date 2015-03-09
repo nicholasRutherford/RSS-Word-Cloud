@@ -1,100 +1,75 @@
 #from os import listdir
-from sentenceSelection import selectSentences
+import os
 import json
+import datetime
+
+import websiteBlocks
+
 
 INFO_DICT = "./hnSummarized/info.json"
-TEXT_DIR = "./hnSummarized/text/"
+SUM_DIR = "./hnSummarized/summaries/"
+WEBSITE = "./hnSummarized/website/index.html"
 
 infoFile = file(INFO_DICT, "r")
 info = json.load(infoFile)
 
-OUT ="""
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <title>HN Summarized</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="custom.css">
-</head>
+webpage = ""
+webpage += websiteBlocks.HEADER
 
-<body>
+def elementBlock(title, keywords, summary, article, comments):
+    return websiteBlocks.ELEMENT.format(title, keywords,
+                                        summary, article, comments)
 
-<div class="jumbotron">
-    <h1 class="text-center">HN Summarized</h1> 
-</div>
-"""
+def dateBlock(text):
+    return websiteBlocks.DATE.format(text)
 
-ROW = '<div class="row">'
-ELE = """
-    <div class="col-sm-6">
-        <div class="container-fluid">
-"""
-ELE_END = """
-        </div>
-    </div>
-"""
-ROW_END = "</div>\n"
-
-PAGE_END = """
-</body>
-</html>
-"""
-
-def block(title, summary, article, comments):
-    ele = """
-    <div class="col-sm-6">
-        <div class="container-fluid">
-            <h3 class ="text-center">{0}</h3>  
-            <blockquote>
-                <p>
-                    {1}
-                </p>
-                <footer>
-                    <a href ="{2}">Article</a> | <a href="{3}">HN Comments</a>
-                </footer>
-            </blockquote>
-        </div>
-    </div>
-"""
-    return ele.format(title, summary, article, comments)
-
+today = datetime.datetime.now().date().isoformat()
 
 ADD_ROW_BEFORE = True
+folderList = os.listdir(SUM_DIR)
+folderList.sort(reverse=True)
+for folder in folderList:
+    print folder, today
+    if folder == today:
+        webpage += dateBlock("Today")
+    else:
+        y, m , d = folder.split("-")
+        dateOb = datetime.date(int(y), int(m), int(d))
+        text = dateOb.strftime("%B %d, %Y") # January 01, 2015
+        webpage += dateBlock(text)
 
-for folder in listdir(TEXT_DIR):
-    for downFile in listdir(TEXT_DIR + folder):
+    fileList = os.listdir(SUM_DIR + folder)
+    fileList.sort(reverse=True)
+    for downFile in fileList:
         fileID = downFile.split(".")[0]
 
-        path = TEXT_DIR + folder + "/" + downFile
+        path = SUM_DIR + folder + "/" + downFile
 
         # Load text
         rawFile = file(path, "r")
         rawText = rawFile.read()
         rawFile.close()
-        sumSents = selectSentences(rawText, 10)
 
-        if ADD_ROW_BEFORE:
-            OUT += ROW
+        #Load Sumary Data
+        keywords, summary = rawText.split("\n")
 
+        # Load HN data
         title = info[fileID]["title"].encode("ascii", "ignore")
-        summary = sumSents.encode("ascii", "ignore")
         article = info[fileID]["url"].encode("ascii", "ignore")
         comments = info[fileID]["comments"].encode("ascii", "ignore")
 
-        OUT += block(title, summary, article, comments)
+        if ADD_ROW_BEFORE:
+            webpage += websiteBlocks.ROW
+
+        webpage += elementBlock(title, keywords, summary, article, comments)
 
         if not ADD_ROW_BEFORE: #False
-            OUT += ROW_END
+            webpage += websiteBlocks.ROW_END
             ADD_ROW_BEFORE = True
         else:
             ADD_ROW_BEFORE = False
 
-ofile = file("out.html", "w+")
-ofile.write(OUT)
+ofile = file(WEBSITE, "w+")
+ofile.write(webpage)
 ofile.close()
-
