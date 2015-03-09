@@ -1,2 +1,0 @@
-One, two, three
-View on GitHub Community RuboCop is a Ruby code style checker based on the community-driven Ruby Style Guide. Support RuboCop supports MRI 1.9, MRI 2.0, JRuby and Rubinius in 1.9 modes. Install RuboCop's installation is pretty standard: $ gem install rubocop Usage Running rubocop with no arguments will check all Ruby source files in the current directory: $ rubocop Alternatively you can rubocop a list of files and directories to check: $ rubocop app spec lib/something.rb Use -h for available command-line options. 2013-2014 Bozhidar Batsov
