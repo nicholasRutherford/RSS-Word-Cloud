@@ -1,0 +1,2 @@
+One, two, three
+[...] Open source is a feature, and an incredibly appealing one as such. When you start competing to be the most free, open source is the inevitable end-game. [...] pffft, of course we are, and heres why. [...] In the meantime, jMonkeyEngine is and always will be unambiguously free. [...] UE4 has been very intuitive to use though, and the toolset is just amazing. [...] I too love the freedom you have with JME, you can do anything you can imagine. [...] and you can build your game out of that.
