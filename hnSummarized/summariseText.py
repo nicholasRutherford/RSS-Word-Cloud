@@ -31,7 +31,7 @@ for folder in os.listdir(TEXT_DIR):
 
         # Key Words
         keyWordsList = ["One", "Two", "Three", "Four"]
-        keyWords = keyWordsList[0] + " | ".join(keyWordsList[1:])
+        keyWords = keyWordsList[0] + " | " + " | ".join(keyWordsList[1:])
 
         toSave = keyWords + "\n" + summary
 
