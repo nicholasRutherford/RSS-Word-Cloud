@@ -12,18 +12,9 @@ def word_token(s, STOP_WORDS):
             good.append(word)
     return good
 
-def selectSentences(rawText, K):
-    # Load stop words
-    STOP_WORDS = stopwords.words('english')
-
-    # Remove newlines, sometimes mess up sentence detector
-    rawText = rawText.replace("\n", " ")
-
-    # Load pre-learned sentence detector, and split into sentences
-    sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
-    rawSentList = sent_detector.tokenize(rawText)
+def goodSentences(rawList):
     sentList = []
-    for sentence in rawSentList:
+    for sentence in rawList:
         if sentence.count("]") > 0:
             continue
         if sentence.count("[") > 0:
@@ -40,7 +31,35 @@ def selectSentences(rawText, K):
             continue
         if sentence.count("=") > 0:
             continue
+        if sentence.count("%") > 1:
+            continue
+        if sentence.count(">") > 1:
+            continue
+        if sentence.count("<") > 1:
+            continue
         sentList.append(sentence)
+    return sentList
+
+def tokeniseSentences(rawText):
+    # Remove newlines, sometimes mess up sentence detector
+    rawText = rawText.replace("\n", " ")
+
+    # Load pre-learned sentence detector, and split into sentences
+    sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+    rawSentList = sent_detector.tokenize(rawText)
+
+    # Select Good sentences
+    sentList = goodSentences(rawSentList)
+
+    return sentList
+
+
+
+def selectSentences(rawText, K):
+    # Load stop words
+    STOP_WORDS = stopwords.words('english')
+
+    sentList = tokeniseSentences(rawText)
 
     # Initialize graph
     g = nx.Graph()
@@ -80,7 +99,7 @@ def selectSentences(rawText, K):
             if skip:
                 toReturn += " [...] "
             else:
-                 toReturn += " "
+                toReturn += " "
             toReturn += sentence
             skip = False
         else:

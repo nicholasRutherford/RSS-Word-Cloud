@@ -1,78 +1,62 @@
 import nltk
 import networkx as nx
-import pprint
+
 from nltk.corpus import stopwords
-stop = stopwords.words('english')
+from sentenceSelection import tokeniseSentences
 
-TEXT_DIR = "./hnSummarized/text/"
-
-testFile = "Fired.txt"
-
-# Load text
-rawFile = file(TEXT_DIR + testFile, "r")
-rawText = rawFile.read()
-rawFile.close()
+STOP = stopwords.words('english')
 
 
+def tokeniseWords(rawText):
+    # Use sentence tokensiser to remove code 'sentences'
+    sentList = tokeniseSentences(rawText)
+    text = ""
+    for sentence in sentList:
+        text += sentence + " "
 
-# Split text into words
-rawWords = nltk.word_tokenize(rawText)
+    # Split text into words
+    return  nltk.word_tokenize(text)
 
-goodWords = []
-for word in rawWords:
-    if word not in stop:
-        goodWords.append(word)
+def removeStop(wordList, stopList):
+    goodWords = []
+    for word in wordList:
+        if word not in stopList:
+            goodWords.append(word)
+    return goodWords
 
-words = []
-tagWords = nltk.pos_tag(goodWords)
-for word, tag in tagWords:
-    if tag =="NN" or tag =="JJ":
-        words.append(word)
+def filterTags(wordList):
+    filteredWords = []
+    tagWords = nltk.pos_tag(wordList)
+    for word, tag in tagWords:
+        if tag =="NN" or tag =="JJ":
+            filteredWords.append(word)
 
+    return filteredWords
 
-# Construct the graph
-g = nx.DiGraph()
-for w in words:
-    g.add_node(w)
+def extract(wordList, num=4, threshold=5):
+    # Construct the graph
+    g = nx.DiGraph()
+    for w in wordList:
+        g.add_node(w)
 
-THRESHOLD = 5
-for i, w in enumerate(words):
-    for j in xrange(1, THRESHOLD+1):
-        try:
-            g.add_edge(w, words[i+j])
-        except IndexError:
-            pass
+    for i, w in enumerate(wordList):
+        for j in xrange(1, threshold+1):
+            try:
+                g.add_edge(w, wordList[i+j])
+            except IndexError:
+                pass
 
-# Compute values
-pairs = nx.pagerank(g)
+    # Compute values
+    pairs = nx.pagerank(g).items()
+    sortedPairs = sorted(pairs, key=lambda x: x[1], reverse=True)
+    goodKeywords = []
+    for keyword, _ in sortedPairs[:num]:
+        goodKeywords.append(keyword)
 
-# Print keywords
-for w in sorted(pairs, key=pairs.get, reverse=True)[:10]:
-  print w, pairs[w]
-# Rank sentences
-"""
-sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
-sentList = sent_detector.tokenize(rawText)
+    return goodKeywords
 
-high_sent = []
-
-for sentence in sentList:
-    sWords = nltk.word_tokenize(sentence)
-    length = float(len(sWords))
-    sValue = 0
-    for w in sWords:
-        try:
-            sValue += pairs[w]
-        except KeyError:
-            length -= 1
-    if length ==0:
-        high_sent.append((sentence, 0))
-    else:       
-        sValue = sValue / length
-        high_sent.append((sentence, sValue))
-
-
-for x in sorted(high_sent, key=lambda x : x[1], reverse=True):
-    print x
-
-"""
+def extractKeywords(rawText, num=4, stopList=STOP, threshold=5):
+    wordList = tokeniseWords(rawText)
+    wordList = removeStop(wordList, stopList)
+    wordList = filterTags(wordList)
+    return extract(wordList, threshold, num)
