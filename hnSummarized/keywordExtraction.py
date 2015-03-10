@@ -59,4 +59,4 @@ def extractKeywords(rawText, num=4, stopList=STOP, threshold=5):
     wordList = tokeniseWords(rawText)
     wordList = removeStop(wordList, stopList)
     wordList = filterTags(wordList)
-    return extract(wordList, threshold, num)
+    return extract(wordList, num, threshold)
