@@ -27,7 +27,7 @@ ELEMENT = """
     <div class="col-sm-6">
         <div class="container-fluid">
             <h3 class="text-center">{0}</h3>
-            <h5 class="text-center">{1}</h5>
+            <h3 class="text-center"><small>{1}</small></h3>
             <blockquote>
                 <p>
                     {2}
